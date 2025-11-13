@@ -14,21 +14,30 @@ function getMonthName(monthIndex: number): string {
     const months = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
-    ]
-    return months[monthIndex] || 'Unknown'
+    ];
+    return months[monthIndex] || 'Unknown';
+}
+
+function getTodayDate(): string {
+    const today = new Date();
+    const day = today.getDate();
+    const month = getMonthName(today.getMonth());
+    const year = today.getFullYear();
+    return `${month} ${day}, ${year}`;
 }
 </script>
 
 <template>
-    <!-- Mobile: Stack vertically, Desktop: Horizontal layout -->
     <div class="space-y-3 sm:space-y-0 mb-4">
-        <!-- Month/Year heading - centered on mobile, flexible on desktop -->
-        <h2
-            class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white text-center sm:text-left order-1 sm:order-2">
-            {{ getMonthName(currentMonth) }} {{ currentYear }}
-        </h2>
+        <div class="text-center sm:text-left">
+            <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                {{ getMonthName(currentMonth) }} {{ currentYear }}
+            </h2>
+            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 mb-1">
+                Today: {{ getTodayDate() }}
+            </p>
+        </div>
 
-        <!-- Navigation buttons row -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-4">
             <button @click="emit('previousMonth')"
                 class="px-4 py-2.5 sm:py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm sm:text-base font-medium">

@@ -3,13 +3,14 @@ import { ref, computed } from 'vue';
 import { useCalendarStore } from '@/stores/calendar';
 
 const props = defineProps<{
-    selectedDate: Date
+    selectedDate: Date;
+    previousView?: 'month' | 'week';
 }>();
 
 const emit = defineEmits<{
-    backToMonth: []
-    dateChanged: [date: Date]
-}>()
+    backToMonth: [];
+    dateChanged: [date: Date];
+}>();
 
 const calendarStore = useCalendarStore()
 
@@ -108,7 +109,7 @@ function formatFullDate(): string {
     <div class="p-3 sm:p-4 md:p-6 bg-white dark:bg-gray-800 rounded-lg shadow">
         <button @click="emit('backToMonth')"
             class="mb-4 px-4 py-2.5 sm:py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors text-sm sm:text-base font-medium w-full sm:w-auto">
-            ← Back to Month
+            ← Back to {{ props.previousView === 'week' ? 'Week' : 'Month' }}
         </button>
 
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-4 mb-4">
