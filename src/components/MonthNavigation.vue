@@ -1,8 +1,8 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
     currentMonth: number
     currentYear: number
-}>()
+}>();
 
 const emit = defineEmits<{
     previousMonth: []

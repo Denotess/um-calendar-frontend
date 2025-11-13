@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useCalendarStore } from '@/stores/calendar'
-import type { CalendarEvent } from '@/types/calendar'
+import { ref, computed } from 'vue';
+import { useCalendarStore } from '@/stores/calendar';
 
 const props = defineProps<{
     selectedDate: Date
-}>()
+}>();
 
 const emit = defineEmits<{
     backToMonth: []
@@ -44,33 +43,7 @@ function getEventColor(eventTitle: string): string {
     if (title.includes('p-')) return 'bg-blue-100 dark:bg-blue-900/30 border-blue-500 dark:border-blue-400'
     if (title.includes('e-p') || title.includes('e-v')) return 'bg-yellow-100 dark:bg-yellow-900/30 border-yellow-500 dark:border-yellow-400'
 
-    return 'bg-gray-100 dark:bg-gray-700 border-gray-500 dark:border-gray-400'
-}
-
-function handlePreviousMonth() {
-    currentMonth.value--
-    if (currentMonth.value < 0) {
-        currentMonth.value = 11
-        currentYear.value--
-    }
-    const daysInNewMonth = new Date(currentYear.value, currentMonth.value + 1, 0).getDate()
-    if (currentDay.value > daysInNewMonth) {
-        currentDay.value = daysInNewMonth
-    }
-    emitDateChange()
-}
-
-function handleNextMonth() {
-    currentMonth.value++
-    if (currentMonth.value > 11) {
-        currentMonth.value = 0
-        currentYear.value++
-    }
-    const daysInNewMonth = new Date(currentYear.value, currentMonth.value + 1, 0).getDate()
-    if (currentDay.value > daysInNewMonth) {
-        currentDay.value = daysInNewMonth
-    }
-    emitDateChange()
+    return 'bg-gray-100 dark:bg-gray-700 border-gray-500 dark:border-gray-400';
 }
 
 function handlePreviousDay() {

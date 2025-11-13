@@ -36,18 +36,8 @@ const calendarDays = computed(() => {
         days.push(day)
     }
 
-    return days
-})
-
-function hasEvents(day: number): boolean {
-    const dayDate = new Date(currentYear.value, currentMonth.value, day)
-
-    return calendarStore.events.some(event => {
-        return event.start.getFullYear() === dayDate.getFullYear() &&
-            event.start.getMonth() === dayDate.getMonth() &&
-            event.start.getDate() === dayDate.getDate()
-    })
-}
+    return days;
+});
 
 function getEventsForDay(day: number): CalendarEvent[] {
     const dayDate = new Date(currentYear.value, currentMonth.value, day)

@@ -18,5 +18,10 @@ export default defineConfigWithVueTs(
 
   pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
+  {
+    rules: {
+      'semi': ['error', 'always'],
+    },
+  },
   skipFormatting,
 )
