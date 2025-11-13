@@ -3,11 +3,15 @@ import { ref, computed } from 'vue';
 import { useCalendarStore } from '@/stores/calendar'
 import type { CalendarEvent } from '@/types/calendar'
 import MonthNavigation from './MonthNavigation.vue'
+import DayView from './DayView.vue'
 
 const calendarStore = useCalendarStore()
 
 const currentMonth = ref(new Date().getMonth());
 const currentYear = ref(new Date().getFullYear());
+
+const currentView = ref<'month' | 'day'>('month')
+const selectedDate = ref<Date>(new Date())
 
 const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -89,57 +93,80 @@ function handleGoToToday() {
 }
 
 function onDayClick(day: number) {
-    const events = getEventsForDay(day)
-    console.log(`Clicked on day ${day}`)
-    console.log('Events:', events)
-    // TODO: Show day view with event details
+    selectedDate.value = new Date(currentYear.value, currentMonth.value, day)
+    currentView.value = 'day'
+}
+
+function handleBackToMonth() {
+    currentView.value = 'month'
+}
+
+function handleDateChanged(newDate: Date) {
+    selectedDate.value = newDate
+}
+
+function isToday(day: number): boolean {
+    const today = new Date()
+    return day === today.getDate() &&
+        currentMonth.value === today.getMonth() &&
+        currentYear.value === today.getFullYear()
 }
 </script>
 <template>
-    <div class="p-4 bg-white rounded-lg shadow">
-        <!-- Month Navigation Component -->
+    <DayView v-if="currentView === 'day'" :selected-date="selectedDate" @back-to-month="handleBackToMonth"
+        @date-changed="handleDateChanged" />
+
+    <div v-else class="p-3 sm:p-4 md:p-6 bg-white dark:bg-gray-800 rounded-lg shadow">
         <MonthNavigation :current-month="currentMonth" :current-year="currentYear" @previous-month="handlePreviousMonth"
             @next-month="handleNextMonth" @go-to-today="handleGoToToday" />
 
-        <!-- Legend -->
-        <div class="flex gap-4 mb-4 text-sm justify-center flex-wrap">
+        <div class="grid grid-cols-2 sm:flex sm:gap-3 md:gap-4 gap-2 mb-4 text-xs sm:text-sm justify-center">
             <div class="flex items-center gap-1">
                 <span class="text-red-500">●</span>
-                <span class="text-gray-700">Izpit/Kolokvij</span>
+                <span class="text-gray-700 dark:text-gray-300">Izpit/Kolokvij</span>
             </div>
             <div class="flex items-center gap-1">
                 <span class="text-blue-500">●</span>
-                <span class="text-gray-700">Predavanje</span>
+                <span class="text-gray-700 dark:text-gray-300">Predavanje</span>
             </div>
             <div class="flex items-center gap-1">
                 <span class="text-green-500">●</span>
-                <span class="text-gray-700">Vaje</span>
+                <span class="text-gray-700 dark:text-gray-300">Vaje</span>
             </div>
             <div class="flex items-center gap-1">
                 <span class="text-yellow-500">●</span>
-                <span class="text-gray-700">E-učilnica</span>
+                <span class="text-gray-700 dark:text-gray-300">E-učilnica</span>
             </div>
         </div>
 
-        <div class="grid grid-cols-7 gap-1 mb-2">
-            <div v-for="dayName in dayNames" :key="dayName" class="text-center font-bold text-gray-700 p-2">
-                {{ dayName }}
-            </div>
-        </div>
-
-        <div class="grid grid-cols-7 gap-1">
-            <div v-for="(day, index) in calendarDays" :key="index" class="text-center">
-                <div v-if="day === null" class="p-2"></div>
-                <button v-else @click="onDayClick(day)"
-                    class="w-full p-2 border rounded text-gray-900 hover:bg-blue-50 hover:border-blue-300 transition-colors">
-                    {{ day }}
-                    <div class="flex gap-1 justify-center mt-1">
-                        <span v-for="event in getEventsForDay(day)" :key="event.id" :class="getEventColor(event.title)"
-                            class="text-xs">
-                            ●
-                        </span>
+        <div class="overflow-x-auto -mx-3 sm:mx-0 px-3 sm:px-0">
+            <div class="min-w-[280px]">
+                <div class="grid grid-cols-7 gap-0.5 sm:gap-1 mb-2">
+                    <div v-for="dayName in dayNames" :key="dayName"
+                        class="text-center font-bold text-gray-700 dark:text-gray-300 p-1 sm:p-2 text-xs sm:text-sm">
+                        {{ dayName }}
                     </div>
-                </button>
+                </div>
+
+                <div class="grid grid-cols-7 gap-0.5 sm:gap-1">
+                    <div v-for="(day, index) in calendarDays" :key="index" class="text-center aspect-square">
+                        <div v-if="day === null" class="p-1 sm:p-2"></div>
+                        <button v-else @click="onDayClick(day)" :class="[
+                            'w-full h-full p-1 sm:p-2 border rounded transition-colors text-xs sm:text-sm md:text-base flex flex-col items-center justify-center',
+                            isToday(day)
+                                ? 'bg-blue-100 dark:bg-blue-900/40 border-blue-500 dark:border-blue-400 text-blue-900 dark:text-blue-100 font-semibold hover:bg-blue-200 dark:hover:bg-blue-900/60'
+                                : 'text-gray-900 dark:text-white bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:bg-blue-50 dark:hover:bg-gray-600 hover:border-blue-300 dark:hover:border-blue-500'
+                        ]">
+                            <span class="font-medium">{{ day }}</span>
+                            <div class="flex gap-0.5 sm:gap-1 justify-center mt-0.5 sm:mt-1 flex-wrap">
+                                <span v-for="event in getEventsForDay(day)" :key="event.id"
+                                    :class="getEventColor(event.title)" class="text-[0.5rem] sm:text-xs leading-none">
+                                    ●
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

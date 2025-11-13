@@ -4,6 +4,8 @@ import { getCalendar } from '@/services/api'
 import { parseICS } from '@/services/calendarParser'
 import type { CalendarEvent } from '@/types/calendar'
 
+const STORAGE_KEY = 'um-calendar-selected'
+
 export const useCalendarStore = defineStore('calendar', () => {
     const selectedCalendar = ref<string>('');
     const events = ref<CalendarEvent[]>([]);
@@ -13,6 +15,9 @@ export const useCalendarStore = defineStore('calendar', () => {
         loading.value = true;
         selectedCalendar.value = calendarName;
 
+        localStorage.setItem(STORAGE_KEY, calendarName);
+
+
         const icsData = await getCalendar(calendarName);
         const parsedEvents = parseICS(icsData);
 
@@ -20,11 +25,15 @@ export const useCalendarStore = defineStore('calendar', () => {
         loading.value = false;
     }
 
-    // Return what other components can use
+    function loadSavedCalendar(): string | null {
+        return localStorage.getItem(STORAGE_KEY);
+    }
+
     return {
         selectedCalendar,
         events,
         loading,
-        loadCalendar
+        loadCalendar,
+        loadSavedCalendar
     };
 })

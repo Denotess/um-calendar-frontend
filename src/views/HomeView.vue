@@ -4,8 +4,7 @@ import MonthView from '@/components/MonthView.vue';
 </script>
 
 <template>
-  <main class="container mx-auto p-4">
-    <h1 class="text-3xl font-bold mb-4">UM Calendar Viewer</h1>
+  <main class="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-7xl">
     <CalendarSelector />
     <MonthView />
   </main>
