@@ -3,41 +3,44 @@ import type { TokenResponse, CalendarName } from '@/types/calendar'
 
 // axios instance and set base url to api url
 const api = axios.create({
-    baseURL: 'https://um-calendar-backend.azurewebsites.net'
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5232',
 })
 
 // jwt token => memory
 let jwtToken: string | null = null
 
 async function getToken(): Promise<string> {
-    const response = await api.get<TokenResponse>("/generate-token/")
-    jwtToken = response.data.token
-    return jwtToken
+  const response = await api.post<TokenResponse>('/auth/generate-token', {
+    username: 'guest',
+    role: 'user',
+  })
+  jwtToken = response.data.token
+  return jwtToken
 }
 
 export async function getCalendarNames(): Promise<CalendarName[]> {
-    if (!jwtToken) {
-        await getToken()
-    }
+  if (!jwtToken) {
+    await getToken()
+  }
 
-    const response = await api.get<CalendarName[]>("/names", {
-        headers: {
-            Authorization: `Bearer ${jwtToken}`
-        }
-    })
+  const response = await api.get<CalendarName[]>('/data/names', {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  })
 
-    return response.data
+  return response.data
 }
 
 export async function getCalendar(name: string): Promise<string> {
-    if (!jwtToken) {
-        await getToken()
-    }
+  if (!jwtToken) {
+    await getToken()
+  }
 
-    const response = await api.get<string>(`/cal/${name}`, {
-        headers: {
-            Authorization: `Bearer ${jwtToken}`
-        }
-    })
-    return response.data
+  const response = await api.get<string>(`/data/cal/${name}`, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  })
+  return response.data
 }
