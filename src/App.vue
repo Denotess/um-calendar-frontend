@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import { useThemeStore } from '@/stores/theme'
+import HamburgerMenu from './components/HamburgerMenu.vue';
 
 const themeStore = useThemeStore()
 </script>
@@ -9,6 +10,7 @@ const themeStore = useThemeStore()
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
     <header class="bg-white dark:bg-gray-800 shadow-sm">
       <div class="container mx-auto px-3 sm:px-4 py-4 sm:py-6 flex items-center justify-between gap-3">
+        <HamburgerMenu />
         <div class="flex items-center gap-3">
           <img src="../src/assets/UM-calendar-logo.png" class="h-[4em] object-contain">
 

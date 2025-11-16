@@ -3,7 +3,8 @@ import type { TokenResponse, CalendarName } from '@/types/calendar'
 
 // axios instance and set base url to api url
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5232',
+  //baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5232',
+  baseURL: 'http://localhost:5232',
 })
 
 // jwt token => memory
