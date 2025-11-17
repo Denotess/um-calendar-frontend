@@ -2,10 +2,16 @@
 import { ref } from 'vue'
 import { useThemeStore } from '@/stores/theme'
 import { useAuthStore } from '@/stores/auth'
-
+import router from '@/router'
 const isOpen = ref(false)
 const themeStore = useThemeStore()
 const auth = useAuthStore()
+
+function handleSignOut() {
+  auth.logout();
+  router.push("/")
+  setTimeout(() => window.location.reload(), 100)
+}
 </script>
 <template>
   <!-- Hamburger Icon -->
@@ -30,11 +36,10 @@ const auth = useAuthStore()
       </button>
     </div>
   <router-link to="/" class="mb-2 text-lg font-medium text-gray-800 dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400">Home</router-link>
-  <router-link to="/about" class="mb-2 text-lg font-medium text-gray-800 dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400">About</router-link>
+  <router-link v-if="auth.isLoggedIn" to="/profile" class="mb-2 text-lg font-medium text-blue-600 dark:text-blue-400 hover:underline">Profile</router-link>
   <router-link v-if="!auth.isLoggedIn" to="/login" class="mb-2 text-lg font-medium text-blue-600 dark:text-blue-400 hover:underline">Login</router-link>
   <router-link v-if="!auth.isLoggedIn" to="/register" class="mb-2 text-lg font-medium text-blue-600 dark:text-blue-400 hover:underline">Register</router-link>
-  <button v-if="auth.isLoggedIn" @click="auth.logout" class="mb-2 text-lg font-medium text-red-600 dark:text-red-400 hover:underline">Sign Out</button>
-  <a href="#" class="mb-2 text-lg font-medium text-gray-800 dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400">Contact</a>
+  <button v-if="auth.isLoggedIn" @click="handleSignOut" class="mb-2 text-lg font-medium text-red-600 dark:text-red-400 hover:underline">Sign Out</button>
     <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
       <button @click="themeStore.toggleTheme"
         class="w-full flex items-center justify-center gap-2 p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
