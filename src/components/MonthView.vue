@@ -130,6 +130,41 @@ function isToday(day: number): boolean {
         currentMonth.value === today.getMonth() &&
         currentYear.value === today.getFullYear()
 }
+
+function extractGroupNumber(title: string): string | null {
+    const match = title.match(/(\d+)\.\s*skupina/i);
+    return match ? (match[1] ?? null) : null;
+}
+
+function shouldDimEvent(eventTitle: string): boolean {
+    const title = eventTitle.trim().toLowerCase();
+
+    // Only apply dimming to vaje events
+    if (!title.startsWith('v-') && !title.startsWith('e-v-') && !title.startsWith('e-v ')) {
+        return false;
+    }
+
+    // If no group is selected, don't dim anything
+    if (!calendarStore.selectedGroup) {
+        return false;
+    }
+
+    const groupNumber = extractGroupNumber(eventTitle);
+
+    // If event has no group, don't dim it
+    if (!groupNumber) {
+        return false;
+    }
+
+    // Dim if the group doesn't match the selected group
+    return groupNumber !== calendarStore.selectedGroup;
+}
+
+function handleGroupChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const value = target.value === 'all' ? null : target.value;
+    calendarStore.setSelectedGroup(value);
+}
 </script>
 <template>
     <div v-if="currentView === 'day'">
@@ -159,22 +194,46 @@ function isToday(day: number): boolean {
             <MonthNavigation :current-month="currentMonth" :current-year="currentYear"
                 @previous-month="handlePreviousMonth" @next-month="handleNextMonth" @go-to-today="handleGoToToday" />
 
-            <div class="grid grid-cols-2 sm:flex sm:gap-3 md:gap-4 gap-2 mb-4 text-xs sm:text-sm justify-center">
-                <div class="flex items-center gap-1">
-                    <span class="text-red-500">●</span>
-                    <span class="text-gray-700 dark:text-gray-300">Izpit/Kolokvij</span>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
+                <div class="grid grid-cols-2 sm:flex sm:gap-3 md:gap-4 gap-2 text-xs sm:text-sm">
+                    <div class="flex items-center gap-1">
+                        <span class="text-red-500">●</span>
+                        <span class="text-gray-700 dark:text-gray-300">Izpit/Kolokvij</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="text-blue-500">●</span>
+                        <span class="text-gray-700 dark:text-gray-300">Predavanje</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="text-green-500">●</span>
+                        <span class="text-gray-700 dark:text-gray-300">Vaje</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="text-orange-500">●</span>
+                        <span class="text-gray-700 dark:text-gray-300">e-Predavanje</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="text-purple-500">●</span>
+                        <span class="text-gray-700 dark:text-gray-300">e-Vaje</span>
+                    </div>
                 </div>
-                <div class="flex items-center gap-1">
-                    <span class="text-blue-500">●</span>
-                    <span class="text-gray-700 dark:text-gray-300">Predavanje</span>
-                </div>
-                <div class="flex items-center gap-1">
-                    <span class="text-green-500">●</span>
-                    <span class="text-gray-700 dark:text-gray-300">Vaje</span>
-                </div>
-                <div class="flex items-center gap-1">
-                    <span class="text-yellow-500">●</span>
-                    <span class="text-gray-700 dark:text-gray-300">E-učilnica</span>
+
+                <div class="flex items-center gap-2">
+                    <label for="group-select-month" class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        My Group:
+                    </label>
+                    <select
+                        id="group-select-month"
+                        :value="calendarStore.selectedGroup || 'all'"
+                        @change="handleGroupChange"
+                        class="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="all">All Groups</option>
+                        <option value="1">Group 1</option>
+                        <option value="2">Group 2</option>
+                        <option value="3">Group 3</option>
+                        <option value="4">Group 4</option>
+                        <option value="5">Group 5</option>
+                    </select>
                 </div>
             </div>
 
@@ -199,8 +258,8 @@ function isToday(day: number): boolean {
                                 <span class="font-medium">{{ day }}</span>
                                 <div class="flex gap-0.5 sm:gap-1 justify-center mt-0.5 sm:mt-1 flex-wrap">
                                     <span v-for="event in getEventsForDay(day)" :key="event.id"
-                                        :class="getEventColor(event.title)"
-                                        class="text-[0.5rem] sm:text-xs leading-none">
+                                        :class="[getEventColor(event.title), shouldDimEvent(event.title) ? 'opacity-30' : 'opacity-100']"
+                                        class="text-[0.5rem] sm:text-xs leading-none transition-opacity">
                                         ●
                                     </span>
                                 </div>

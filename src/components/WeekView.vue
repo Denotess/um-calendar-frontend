@@ -105,6 +105,41 @@ function isToday(date: Date): boolean {
         date.getFullYear() === today.getFullYear();
 }
 
+function extractGroupNumber(title: string): string | null {
+    const match = title.match(/(\d+)\.\s*skupina/i);
+    return match ? (match[1] ?? null) : null;
+}
+
+function shouldDimEvent(eventTitle: string): boolean {
+    const title = eventTitle.trim().toLowerCase();
+
+    // Only apply dimming to vaje events
+    if (!title.startsWith('v-') && !title.startsWith('e-v-') && !title.startsWith('e-v ')) {
+        return false;
+    }
+
+    // If no group is selected, don't dim anything
+    if (!calendarStore.selectedGroup) {
+        return false;
+    }
+
+    const groupNumber = extractGroupNumber(eventTitle);
+
+    // If event has no group, don't dim it
+    if (!groupNumber) {
+        return false;
+    }
+
+    // Dim if the group doesn't match the selected group
+    return groupNumber !== calendarStore.selectedGroup;
+}
+
+function handleGroupChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const value = target.value === 'all' ? null : target.value;
+    calendarStore.setSelectedGroup(value);
+}
+
 function shortenTitle(title: string, maxLength: number = 40): string {
     if (title.length <= maxLength) return title;
     return title.substring(0, maxLength - 3) + '...';
@@ -186,6 +221,24 @@ function getTodayDate(): string {
                     Next Week →
                 </button>
             </div>
+
+            <div class="flex items-center justify-center gap-2 mt-3">
+                <label for="group-select" class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    My Group:
+                </label>
+                <select
+                    id="group-select"
+                    :value="calendarStore.selectedGroup || 'all'"
+                    @change="handleGroupChange"
+                    class="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="all">All Groups</option>
+                    <option value="1">Group 1</option>
+                    <option value="2">Group 2</option>
+                    <option value="3">Group 3</option>
+                    <option value="4">Group 4</option>
+                    <option value="5">Group 5</option>
+                </select>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3 sm:gap-2">
@@ -218,8 +271,8 @@ function getTodayDate(): string {
                     </div>
 
                     <div v-else v-for="event in getEventsForDay(day)" :key="event.id"
-                        :class="getEventColorClass(event.title)"
-                        class="p-1.5 rounded border-l-4 hover:shadow-sm transition-shadow cursor-pointer"
+                        :class="[getEventColorClass(event.title), shouldDimEvent(event.title) ? 'opacity-30' : 'opacity-100']"
+                        class="p-1.5 rounded border-l-4 hover:shadow-sm transition-all cursor-pointer"
                         :title="event.title">
                         <div class="flex items-start gap-1.5">
                             <span class="text-sm flex-shrink-0">{{ getEventIcon(event.title) }}</span>

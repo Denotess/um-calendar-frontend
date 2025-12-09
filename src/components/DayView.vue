@@ -115,6 +115,41 @@ function getMonthName(monthIndex: number): string {
 function formatFullDate(): string {
     return `${getMonthName(currentMonth.value)} ${currentDay.value}, ${currentYear.value}`
 }
+
+function extractGroupNumber(title: string): string | null {
+    const match = title.match(/(\d+)\.\s*skupina/i);
+    return match ? (match[1] ?? null) : null;
+}
+
+function shouldDimEvent(eventTitle: string): boolean {
+    const title = eventTitle.trim().toLowerCase();
+
+    // Only apply dimming to vaje events
+    if (!title.startsWith('v-') && !title.startsWith('e-v-') && !title.startsWith('e-v ')) {
+        return false;
+    }
+
+    // If no group is selected, don't dim anything
+    if (!calendarStore.selectedGroup) {
+        return false;
+    }
+
+    const groupNumber = extractGroupNumber(eventTitle);
+
+    // If event has no group, don't dim it
+    if (!groupNumber) {
+        return false;
+    }
+
+    // Dim if the group doesn't match the selected group
+    return groupNumber !== calendarStore.selectedGroup;
+}
+
+function handleGroupChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const value = target.value === 'all' ? null : target.value;
+    calendarStore.setSelectedGroup(value);
+}
 </script>
 
 <template>
@@ -141,6 +176,24 @@ function formatFullDate(): string {
             </button>
         </div>
 
+        <div class="flex items-center justify-center gap-2 mb-4">
+            <label for="group-select-day" class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                My Group:
+            </label>
+            <select
+                id="group-select-day"
+                :value="calendarStore.selectedGroup || 'all'"
+                @change="handleGroupChange"
+                class="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="all">All Groups</option>
+                <option value="1">Group 1</option>
+                <option value="2">Group 2</option>
+                <option value="3">Group 3</option>
+                <option value="4">Group 4</option>
+                <option value="5">Group 5</option>
+            </select>
+        </div>
+
         <div class="mb-6 text-center">
             <h3 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
                 {{ getDayName(new Date(currentYear, currentMonth, currentDay)) }}
@@ -155,8 +208,8 @@ function formatFullDate(): string {
                 Events ({{ dayEvents.length }})
             </h4>
 
-            <div v-for="event in dayEvents" :key="event.id" :class="getEventColor(event.title)"
-                class="p-3 sm:p-4 rounded-lg border-l-4">
+            <div v-for="event in dayEvents" :key="event.id" :class="[getEventColor(event.title), shouldDimEvent(event.title) ? 'opacity-30' : 'opacity-100']"
+                class="p-3 sm:p-4 rounded-lg border-l-4 transition-opacity">
                 <div class="flex items-start justify-between">
                     <div class="flex-1">
                         <h5 class="font-bold text-base sm:text-lg text-gray-900 dark:text-white mb-1">

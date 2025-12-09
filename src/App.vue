@@ -1,8 +1,15 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import { useThemeStore } from '@/stores/theme'
+import { useCalendarStore } from '@/stores/calendar'
 
 const themeStore = useThemeStore()
+const calendarStore = useCalendarStore()
+
+onMounted(() => {
+  calendarStore.loadSavedGroup()
+})
 </script>
 
 <template>
