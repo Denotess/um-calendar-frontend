@@ -37,12 +37,24 @@ function formatTime(date: Date): string {
 }
 
 function getEventColor(eventTitle: string): string {
-    const title = eventTitle.toLowerCase()
+    const title = eventTitle.trim().toLowerCase()
 
-    if (title.includes('izpit') || title.includes('kolokvij')) return 'bg-red-100 dark:bg-red-900/30 border-red-500 dark:border-red-400'
-    if (title.includes('v-')) return 'bg-green-100 dark:bg-green-900/30 border-green-500 dark:border-green-400'
-    if (title.includes('p-')) return 'bg-blue-100 dark:bg-blue-900/30 border-blue-500 dark:border-blue-400'
-    if (title.includes('e-p') || title.includes('e-v')) return 'bg-yellow-100 dark:bg-yellow-900/30 border-yellow-500 dark:border-yellow-400'
+    // Check most specific patterns first
+    if (title.startsWith('e-v-') || title.startsWith('e-v ')) {
+        return 'bg-purple-100 dark:bg-purple-900/30 border-purple-500 dark:border-purple-400'
+    }
+    if (title.startsWith('e-p-') || title.startsWith('e-p ')) {
+        return 'bg-orange-100 dark:bg-orange-900/30 border-orange-500 dark:border-orange-400'
+    }
+    if (title.startsWith('v-')) {
+        return 'bg-green-100 dark:bg-green-900/30 border-green-500 dark:border-green-400'
+    }
+    if (title.startsWith('p-')) {
+        return 'bg-blue-100 dark:bg-blue-900/30 border-blue-500 dark:border-blue-400'
+    }
+    if (title.includes('izpit') || title.includes('kolokvij')) {
+        return 'bg-red-100 dark:bg-red-900/30 border-red-500 dark:border-red-400'
+    }
 
     return 'bg-gray-100 dark:bg-gray-700 border-gray-500 dark:border-gray-400';
 }

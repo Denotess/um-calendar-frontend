@@ -53,23 +53,47 @@ function getDayName(date: Date): string {
 }
 
 function getEventColorClass(eventTitle: string): string {
-    const title = eventTitle.toLowerCase();
+    const title = eventTitle.trim().toLowerCase();
 
-    if (title.includes('izpit') || title.includes('kolokvij')) return 'border-l-red-500 bg-red-50 dark:bg-red-900/20';
-    if (title.includes('v-')) return 'border-l-green-500 bg-green-50 dark:bg-green-900/20';
-    if (title.includes('p-')) return 'border-l-blue-500 bg-blue-50 dark:bg-blue-900/20';
-    if (title.includes('e-p') || title.includes('e-v')) return 'border-l-yellow-500 bg-yellow-50 dark:bg-yellow-900/20';
+    // Check most specific patterns first
+    if (title.startsWith('e-v-') || title.startsWith('e-v ')) {
+        return 'border-l-purple-500 bg-purple-50 dark:bg-purple-900/20';
+    }
+    if (title.startsWith('e-p-') || title.startsWith('e-p ')) {
+        return 'border-l-orange-500 bg-orange-50 dark:bg-orange-900/20';
+    }
+    if (title.startsWith('v-')) {
+        return 'border-l-green-500 bg-green-50 dark:bg-green-900/20';
+    }
+    if (title.startsWith('p-')) {
+        return 'border-l-blue-500 bg-blue-50 dark:bg-blue-900/20';
+    }
+    if (title.includes('izpit') || title.includes('kolokvij')) {
+        return 'border-l-red-500 bg-red-50 dark:bg-red-900/20';
+    }
 
     return 'border-l-gray-500 bg-gray-50 dark:bg-gray-700/20';
 }
 
 function getEventIcon(eventTitle: string): string {
-    const title = eventTitle.toLowerCase();
+    const title = eventTitle.trim().toLowerCase();
 
-    if (title.includes('izpit') || title.includes('kolokvij')) return '📝';
-    if (title.includes('v-')) return '💻';
-    if (title.includes('p-')) return '📚';
-    if (title.includes('e-p') || title.includes('e-v')) return '🌐';
+    // Check most specific patterns first
+    if (title.startsWith('e-v-') || title.startsWith('e-v ')) {
+        return '🌐';
+    }
+    if (title.startsWith('e-p-') || title.startsWith('e-p ')) {
+        return '🌐';
+    }
+    if (title.startsWith('v-')) {
+        return '💻';
+    }
+    if (title.startsWith('p-')) {
+        return '📚';
+    }
+    if (title.includes('izpit') || title.includes('kolokvij')) {
+        return '📝';
+    }
 
     return '📅';
 }

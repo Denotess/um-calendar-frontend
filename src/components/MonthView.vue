@@ -52,14 +52,26 @@ function getEventsForDay(day: number): CalendarEvent[] {
 }
 
 function getEventColor(eventTitle: string): string {
-    const title = eventTitle.toLowerCase()
+    const title = eventTitle.trim().toLowerCase()
 
-    if (title.includes('izpit') || title.includes('kolokvij')) return 'text-red-500'
-    if (title.includes('v-')) return 'text-green-500'
-    if (title.includes('p-')) return 'text-blue-500'
-    if (title.includes('e-p') || title.includes('e-V')) return 'text-yellow-500'
+    // Check most specific patterns first
+    if (title.startsWith('e-v-') || title.startsWith('e-v ')) {
+        return 'text-purple-500'
+    }
+    if (title.startsWith('e-p-') || title.startsWith('e-p ')) {
+        return 'text-orange-500'
+    }
+    if (title.startsWith('v-')) {
+        return 'text-green-500'
+    }
+    if (title.startsWith('p-')) {
+        return 'text-blue-500'
+    }
+    if (title.includes('izpit') || title.includes('kolokvij')) {
+        return 'text-red-500'
+    }
 
-    return 'text-blue-900'
+    return 'text-gray-500'
 }
 
 function handlePreviousMonth() {
