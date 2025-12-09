@@ -222,22 +222,40 @@ function getTodayDate(): string {
                 </button>
             </div>
 
-            <div class="flex items-center justify-center gap-2 mt-3">
-                <label for="group-select" class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    My Group:
-                </label>
-                <select
-                    id="group-select"
-                    :value="calendarStore.selectedGroup || 'all'"
-                    @change="handleGroupChange"
-                    class="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="all">All Groups</option>
-                    <option value="1">Group 1</option>
-                    <option value="2">Group 2</option>
-                    <option value="3">Group 3</option>
-                    <option value="4">Group 4</option>
-                    <option value="5">Group 5</option>
-                </select>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-2 mt-3">
+                <div class="flex items-center gap-2">
+                    <label for="group-select" class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                        <span class="text-base">👥</span>
+                        <span>My Group:</span>
+                    </label>
+                    <select
+                        id="group-select"
+                        :value="calendarStore.selectedGroup || 'all'"
+                        @change="handleGroupChange"
+                        class="min-h-[44px] px-3 py-2 text-sm border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:border-blue-400 dark:hover:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer font-medium">
+                        <option value="all">All Groups</option>
+                        <option value="1">Group 1</option>
+                        <option value="2">Group 2</option>
+                        <option value="3">Group 3</option>
+                        <option value="4">Group 4</option>
+                        <option value="5">Group 5</option>
+                    </select>
+                </div>
+
+                <div v-if="calendarStore.selectedGroup" class="flex flex-col items-center gap-1">
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-xs font-medium">
+                        <span>🔍 Filtering: Group {{ calendarStore.selectedGroup }}</span>
+                        <button
+                            @click="calendarStore.setSelectedGroup(null)"
+                            class="hover:bg-blue-200 dark:hover:bg-blue-800/50 rounded-full p-0.5 transition-colors"
+                            title="Clear filter">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="text-[0.65rem] text-gray-500 dark:text-gray-400 italic">Other groups shown dimmed</p>
+                </div>
             </div>
         </div>
 
@@ -271,7 +289,7 @@ function getTodayDate(): string {
                     </div>
 
                     <div v-else v-for="event in getEventsForDay(day)" :key="event.id"
-                        :class="[getEventColorClass(event.title), shouldDimEvent(event.title) ? 'opacity-30' : 'opacity-100']"
+                        :class="[getEventColorClass(event.title), shouldDimEvent(event.title) ? 'opacity-45' : 'opacity-100']"
                         class="p-1.5 rounded border-l-4 hover:shadow-sm transition-all cursor-pointer"
                         :title="event.title">
                         <div class="flex items-start gap-1.5">

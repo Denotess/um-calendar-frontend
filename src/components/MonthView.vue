@@ -196,44 +196,62 @@ function handleGroupChange(event: Event) {
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
                 <div class="grid grid-cols-2 sm:flex sm:gap-3 md:gap-4 gap-2 text-xs sm:text-sm">
-                    <div class="flex items-center gap-1">
-                        <span class="text-red-500">●</span>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-4 h-4 border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 rounded-sm"></div>
                         <span class="text-gray-700 dark:text-gray-300">Izpit/Kolokvij</span>
                     </div>
-                    <div class="flex items-center gap-1">
-                        <span class="text-blue-500">●</span>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-4 h-4 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 rounded-sm"></div>
                         <span class="text-gray-700 dark:text-gray-300">Predavanje</span>
                     </div>
-                    <div class="flex items-center gap-1">
-                        <span class="text-green-500">●</span>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-4 h-4 border-l-4 border-green-500 bg-green-50 dark:bg-green-900/20 rounded-sm"></div>
                         <span class="text-gray-700 dark:text-gray-300">Vaje</span>
                     </div>
-                    <div class="flex items-center gap-1">
-                        <span class="text-orange-500">●</span>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-4 h-4 border-l-4 border-orange-500 bg-orange-50 dark:bg-orange-900/20 rounded-sm"></div>
                         <span class="text-gray-700 dark:text-gray-300">e-Predavanje</span>
                     </div>
-                    <div class="flex items-center gap-1">
-                        <span class="text-purple-500">●</span>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-4 h-4 border-l-4 border-purple-500 bg-purple-50 dark:bg-purple-900/20 rounded-sm"></div>
                         <span class="text-gray-700 dark:text-gray-300">e-Vaje</span>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <label for="group-select-month" class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        My Group:
-                    </label>
-                    <select
-                        id="group-select-month"
-                        :value="calendarStore.selectedGroup || 'all'"
-                        @change="handleGroupChange"
-                        class="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="all">All Groups</option>
-                        <option value="1">Group 1</option>
-                        <option value="2">Group 2</option>
-                        <option value="3">Group 3</option>
-                        <option value="4">Group 4</option>
-                        <option value="5">Group 5</option>
-                    </select>
+                <div class="flex items-center gap-2 flex-wrap justify-center">
+                    <div class="flex items-center gap-2">
+                        <label for="group-select-month" class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                            <span class="text-base">👥</span>
+                            <span>My Group:</span>
+                        </label>
+                        <select
+                            id="group-select-month"
+                            :value="calendarStore.selectedGroup || 'all'"
+                            @change="handleGroupChange"
+                            class="min-h-[44px] px-3 py-2 text-sm border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:border-blue-400 dark:hover:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer font-medium">
+                            <option value="all">All Groups</option>
+                            <option value="1">Group 1</option>
+                            <option value="2">Group 2</option>
+                            <option value="3">Group 3</option>
+                            <option value="4">Group 4</option>
+                            <option value="5">Group 5</option>
+                        </select>
+                    </div>
+
+                    <div v-if="calendarStore.selectedGroup" class="flex flex-col items-center gap-1">
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-xs font-medium">
+                            <span>🔍 Filtering: Group {{ calendarStore.selectedGroup }}</span>
+                            <button
+                                @click="calendarStore.setSelectedGroup(null)"
+                                class="hover:bg-blue-200 dark:hover:bg-blue-800/50 rounded-full p-0.5 transition-colors"
+                                title="Clear filter">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-[0.65rem] text-gray-500 dark:text-gray-400 italic">Other groups shown dimmed</p>
+                    </div>
                 </div>
             </div>
 
@@ -258,7 +276,7 @@ function handleGroupChange(event: Event) {
                                 <span class="font-medium">{{ day }}</span>
                                 <div class="flex gap-0.5 sm:gap-1 justify-center mt-0.5 sm:mt-1 flex-wrap">
                                     <span v-for="event in getEventsForDay(day)" :key="event.id"
-                                        :class="[getEventColor(event.title), shouldDimEvent(event.title) ? 'opacity-30' : 'opacity-100']"
+                                        :class="[getEventColor(event.title), shouldDimEvent(event.title) ? 'opacity-45' : 'opacity-100']"
                                         class="text-[0.5rem] sm:text-xs leading-none transition-opacity">
                                         ●
                                     </span>
