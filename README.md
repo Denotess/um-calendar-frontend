@@ -32,11 +32,24 @@ npm run dev
 ## Optional environment variable
 
 Set `VITE_API_BASE` if backend is not the same origin/proxy target.
+Use origin only (do not include `/data`).
 
 Example `.env`:
 
 ```bash
 VITE_API_BASE=http://localhost:8080
+```
+
+For remote API:
+
+```bash
+VITE_API_BASE=https://um-calendar-api.bravebeach-4259e703.italynorth.azurecontainerapps.io
+```
+
+Wrong (causes `/data/data/names`):
+
+```bash
+VITE_API_BASE=https://um-calendar-api.bravebeach-4259e703.italynorth.azurecontainerapps.io/data
 ```
 
 ## Deploy to Cloudflare Pages
