@@ -776,16 +776,6 @@ function formatWeekRange(date) {
         </div>
       </section>
 
-      <section
-        class="rounded-3xl border p-3 text-xs transition-colors"
-        :class="
-          isDarkMode
-            ? 'border-[#192540] bg-[#0f1930] text-[#a3aac4] shadow-[0_0_24px_rgba(105,218,255,0.06)]'
-            : 'border-[#dbe3ef] bg-white text-[#607089] shadow-[0_0_14px_rgba(8,65,110,0.08)]'
-        "
-      >
-        Showing {{ selectedActivityLabel() }} with color-based activity detection.
-      </section>
     </main>
 
     <footer
